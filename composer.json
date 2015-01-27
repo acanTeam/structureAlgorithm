@@ -1,0 +1,28 @@
+{
+  "minimum-stability": "dev",
+  "name": "acan-team/structure-algorithm",
+  "description": "The structure and algorithm based PHP5.3",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "PHP5.3",
+    "structure",
+    "algorithm"
+  ],
+  "homepage": "https://github.com/acanTeam/structureAlgorithm",
+  "require": {
+    "php": ">=5.3.3"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ],
+    "files": [
+    ]
+  }
+
+}
