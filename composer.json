@@ -22,6 +22,7 @@
       "tests/"
     ],
     "files": [
+      "src/Structure/Base/Functions.php"
     ]
   }
 
