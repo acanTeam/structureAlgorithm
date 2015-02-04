@@ -1,5 +1,8 @@
 <?php
 require './init.php';
+$basicArray = new Structure\Util\BasicArray();
+print_r($basicArray);
+exit();
 
 require_once './DenseMatrix.php';
 //require_once './SparseMatrixAsArray.php';

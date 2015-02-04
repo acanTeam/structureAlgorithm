@@ -1,67 +1,44 @@
 <?php
-/**
- * @copyright Copyright &copy; 2005 by Bruno R. Preiss, P.Eng.
- *
- * @author $Author: brpreiss $
- * @version $Id: MultiDimensionalArray.php,v 1.8 2005/12/09 01:11:13 brpreiss Exp $
- * @package Opus11
- */
 
-/**
- */
-require_once 'Opus11/AbstractObject.php';
-require_once 'Opus11/BasicArray.php';
-require_once 'Opus11/Exceptions.php';
-require_once 'Opus11/Box.php';
+namespace Structure\Util;
 
-//{
+use Structure\Base\AbstractObject;
+
 /**
  * Represents a multi-dimensional array.
- *
- * @package Opus11
  */
-class MultiDimensionalArray
-    extends AbstractObject
-    implements ArrayAccess
+class MultiDimensionalArray extends AbstractObject implements \ArrayAccess
 {
     /**
      * @var object BasicArray The dimensions of the array.
      */
-    protected $dimensions = NULL;
+    protected $dimensions = null;
+
     /**
-     * @var object BasicArray
-     * Used in the calculation that maps a set of indices
-     * into a position in a one-dimensional array.
+     * @var object BasicArray Used in the calculation that maps 
+     * a set of indices into a position in a one-dimensional array.
      */
-    protected $factors = NULL;
+    protected $factors = null;
+
     /**
-     * @var object BasicArray
-     * A one-dimensional array that holds the elements
-     * of the multi-dimensional array.
+     * @var object BasicArray A one-dimensional array that holds 
+     * the elements of the multi-dimensional array.
      */
-    protected $data = NULL;
+    protected $data = null;
 
-//}@head
-
-//{
-//!    // ...
-//!}
-//}@tail
-
-//{
     /**
      * Constructs a MultiDimensionalArray with the specified dimensions.
-     *
      */
     public function __construct($dimensions)
     {
         parent::__construct();
+
         $length = sizeof($dimensions);
         $this->dimensions = new BasicArray($length);
         $this->factors = new BasicArray($length);
+
         $product = 1;
-        for ($i = $length - 1; $i >= 0; --$i)
-        {
+        for ($i = $length - 1; $i >= 0; --$i) {
             $this->dimensions[$i] = $dimensions[$i];
             $this->factors[$i] = $product;
             $product *= $this->dimensions[$i];
@@ -74,14 +51,11 @@ class MultiDimensionalArray
      */
     public function __destruct()
     {
-        $this->dimesions = NULL;
-        $this->factors = NULL;
-        $this->data = NULL;
+        $this->dimesions = $this->factors = $this->data = null;
+
         parent::__destruct();
     }
-//}>a
 
-//{
     /**
      * Maps a set of indices for the multi-dimensional array
      * into the corresponding position in the one-dimensional array.
@@ -90,16 +64,19 @@ class MultiDimensionalArray
      */
     private function getOffset($indices)
     {
-        if (sizeof($indices) != $this->dimensions->getLength())
-            throw new IndexError();
+        $length = $this->dimensions->getLength();
+        if (sizeof($indices) != $length) {
+            throw new \Structure\Exception\IndexException();
+        }
+
         $offset = 0;
-        for ($i = 0; $i < $this->dimensions->getLength(); ++$i)
-        {
-            if ($indices[$i] < 0 ||
-                $indices[$i] >= $this->dimensions[$i])
-                throw new IndexError();
+        for ($i = 0; $i < $length; ++$i) {
+            if ($indices[$i] < 0 || $indices[$i] >= $this->dimensions[$i]) {
+                throw new \Structure\Exception\IndexException();
+            }
             $offset += $this->factors[$i] * $indices[$i];
         }
+
         return $offset;
     }
 
@@ -143,27 +120,6 @@ class MultiDimensionalArray
      */
     public function offsetUnset($indices)
     {
-        $this->data[$this->getOffset($indices)] = NULL;
-    }
-//}>b
-
-    /**
-     * Main program.
-     *
-     * @param array $args Command-line arguments.
-     * @return integer Zero on success; non-zero on failure.
-     */
-    public static function main($args)
-    {
-        printf("MultiDimensionalArray main program.\n");
-        $status = 0;
-
-        return $status;
+        $this->data[$this->getOffset($indices)] = null;
     }
 }
-
-if (realpath($argv[0]) == realpath(__FILE__))
-{
-    exit(MultiDimensionalArray::main(array_slice($argv, 1)));
-}
-?>

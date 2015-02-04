@@ -41,20 +41,20 @@ class BasicArray extends AbstractObject implements \ArrayAccess
         case 'integer':
             $this->length = $param;
             for ($i = 0; $i < $this->length; ++$i) {
-                $this->data[$i] = NULL;
+                $this->data[$i] = null;
             }
             break;
         case 'array':
             $this->length = sizeof($param);
             for ($i = 0; $i < $this->length; ++$i) {
-                $this->data[$i] = $param[$i];
+                $this->data[$i] = is_scalar($param[$i]) ? $param[$i] : null;
             }
             break;
         default:
             throw new TypeError();
         }
 
-        $this->baseIndex = $baseIndex;
+        $this->baseIndex = intval($baseIndex);
     }
 
     /**
@@ -62,7 +62,7 @@ class BasicArray extends AbstractObject implements \ArrayAccess
      */
     public function __destruct()
     {
-        $this->data = NULL;
+        $this->data = null;
         parent::__destruct();
     }
 
@@ -90,7 +90,7 @@ class BasicArray extends AbstractObject implements \ArrayAccess
     public function offsetExists($index)
     {
         return $index >= $this->baseIndex &&
-            $index <= $this->baseIndex + $this->length;
+            $index < $this->baseIndex + $this->length;
     }
 
     /**
@@ -102,7 +102,7 @@ class BasicArray extends AbstractObject implements \ArrayAccess
     public function offsetGet($index)
     {
         if (!$this->offsetExists($index)) {
-            throw new IndexError();
+            throw new \Structure\Exception\IndexException();
         }
         return $this->data[$index - $this->baseIndex];
     }
@@ -116,7 +116,7 @@ class BasicArray extends AbstractObject implements \ArrayAccess
     public function offsetSet($index, $value)
     {
         if (!$this->offsetExists($index)) {
-            throw new Structure\Exception\IndexException();
+            throw new \Structure\Exception\IndexException();
         }
         $this->data[$index - $this->baseIndex] = $value;
     }
@@ -129,9 +129,10 @@ class BasicArray extends AbstractObject implements \ArrayAccess
     public function offsetUnset($index)
     {
         if (!$this->offsetExists($index)) {
-            throw new Structure\Exception\IndexException();
+            throw new \Structure\Exception\IndexException();
         }
-        $this->data[$index - $this->baseIndex] = NULL;
+        unset($this->data[$index - $this->baseIndex]);
+        $this->length--;
     }
 
     /**
@@ -139,7 +140,7 @@ class BasicArray extends AbstractObject implements \ArrayAccess
      *
      * @return array The data of this array.
      */
-    public function & getData()
+    public function getData()
     {
         return $this->data;
     }
@@ -208,8 +209,14 @@ class BasicArray extends AbstractObject implements \ArrayAccess
      * @param mixed $initialState The initial state.
      * @return mixed The value returned by the last call to the callback function.
      */
-    public function reduce($callback, $initialState)
+    public function reduce()
     {
+        $callback = create_function(
+            '$s, $item',
+            'return array($s[0] . $s[1] . str($item), ", ");'
+        );
+        $initialState = array('', '');
+
         return array_reduce($this->data, $callback, $initialState);
     }
 
@@ -220,12 +227,7 @@ class BasicArray extends AbstractObject implements \ArrayAccess
      */
     public function __toString()
     {
-        $callback = create_function(
-            '$s, $item',
-            'return array($s[0] . $s[1] . str($item), ", ");'
-        );
-        $s = $this->reduce($callback, array('', ''));
-
-        return 'Array{baseIndex=' . $this->baseIndex . ', data=(' . $s[0] . ')}';
+        $stringInfos = $this->reduce();
+        return 'Array{baseIndex=' . $this->baseIndex . ', length=' . $this->length . ', data=(' . $stringInfos[0] . ')}';
     }
 }    

@@ -6,7 +6,7 @@
  * @param mixed item An item.
  * @return integer A hash code.
  */
-function hash($item)
+function myhash($item)
 {
     $type = gettype($item);
     if ($type == 'object') {
@@ -133,4 +133,43 @@ function le($left, $right)
     } else {
         return $left <= $right;
     }
+}
+
+/**
+ * Boxes the given value.
+ *
+ * @param mixed $value A value.
+ * @return object Box A boxed value.
+ */
+function box($value)
+{
+    $type = gettype($value);
+    //var_dump($value);
+    //echo '##' . $type . "\n";
+    switch ($type) {
+    case 'boolean':
+        return new \Structure\Util\BoxedBoolean($value);
+    case 'integer':
+        return new \Structure\Util\BoxedInteger($value);
+    case 'float':
+    case 'double':
+        return new \Structure\Util\BoxedFloat($value);
+    case 'string':
+        return new \Structure\Util\BoxedString($value);
+    case 'array':
+        return new \Structure\Util\BasicArray($value);
+    default:
+        throw new \Structure\Exception\TypeException();
+    }
+}
+
+/**
+ * Unboxes the given value.
+ *
+ * @param object Box box A boxed value.
+ * @return mixed The value in the box.
+ */
+function unbox($box)
+{
+    return $box->getValue();
 }

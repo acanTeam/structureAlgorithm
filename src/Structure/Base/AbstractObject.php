@@ -2,8 +2,6 @@
 
 namespace Structure\Base;
 
-use Straucture\Interface\ObjectInterface;
-
 /**
  * Abstract base class from which all object classes are derived.
  */
@@ -58,6 +56,6 @@ abstract class AbstractObject implements ObjectInterface
      */
     public function __toString()
     {
-        return $this->getClass()->getName() . '{' . strval($this) . '}';
+        return $this->getClass()->getName();
     }
 }

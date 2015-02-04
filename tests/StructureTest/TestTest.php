@@ -7,7 +7,6 @@ class TestTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->test = 'test';
-        echo $this->test;
     }
 
     public function tearDown()
