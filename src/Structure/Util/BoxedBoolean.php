@@ -69,7 +69,7 @@ class BoxedBoolean extends Box
      *
      * @return integer An integer.
      */
-    public function getHashCode()
+    public function getHashCodebak()
     {
         return $this->value ? 1 : 0;
     }

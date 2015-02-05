@@ -59,7 +59,7 @@ class BoxedInteger extends Box
      *
      * @return integer An integer.
      */
-    public function getHashCode()
+    public function getHashCodebak()
     {
         return $this->value;
     }
