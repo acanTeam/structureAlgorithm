@@ -19,6 +19,12 @@ class StackTest extends PHPUnit_Framework_TestCase
         $this->stackBase($stack);
     }
     
+    public function testStackAsLinkedList()
+    {
+        $stack = new Structure\Linear\StackAsLinkedList();
+        $this->stackBase($stack);
+    }
+    
     protected function stackBase($stack)
     {
         printf("AbstractStack test program.\n");

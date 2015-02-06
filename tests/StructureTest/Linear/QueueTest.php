@@ -25,6 +25,18 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $this->queueBase($deque);
     }
 
+    public function testQueueAsLinkedList()
+    {
+        $deque = new Structure\Linear\QueueAsLinkedList(10);
+        $this->queueBase($deque);
+    }
+
+    public function testDequeAsLinkedList()
+    {
+        $deque = new Structure\Linear\DequeAsLinkedList(10);
+        $this->queueBase($deque);
+    }
+
     protected function queueBase($queue)
     {
         for ($i = 0; $i < 5; ++$i) {
