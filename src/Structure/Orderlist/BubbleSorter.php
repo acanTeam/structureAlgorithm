@@ -1,32 +1,12 @@
 <?php
-/**
- * @copyright Copyright (c) 2005 by Bruno R. Preiss, P.Eng.
- *
- * @author $Author: brpreiss $
- * @version $Id: BubbleSorter.php,v 1.2 2005/12/09 01:11:08 brpreiss Exp $
- * @package Opus11
- */
 
-/**
- */
-require_once 'Opus11/AbstractSorter.php';
+namespace Structure\Orderlist;
 
-//{
 /**
  * Implements bubble sort.
- *
- * @package Opus11
  */
-class BubbleSorter
-    extends AbstractSorter
+class BubbleSorter extends AbstractSorter
 {
-//}@head
-
-//{
-//!    // ...
-//!}
-//}@tail
-
     /**
      * Constructor.
      */
@@ -43,7 +23,6 @@ class BubbleSorter
         parent::__destruct();
     }
 
-//{
     /**
      * Sorts the array of comparable objects.
      */
@@ -54,7 +33,6 @@ class BubbleSorter
                 if (gt($this->array[$j], $this->array[$j + 1]))
                     $this->swap($j, $j + 1);
     }
-//}>a
 
     /**
      * Main program.
@@ -71,9 +49,3 @@ class BubbleSorter
         return $status;
     }
 }
-
-if (realpath($argv[0]) == realpath(__FILE__))
-{
-    exit(BubbleSorter::main(array_slice($argv, 1)));
-}
-?>
