@@ -2,8 +2,6 @@
 
 namespace Structure\Util\Matrix;
 
-use Structure\Util\BasicArray;
-
 /**
  * Data structure used to represent a matrix entry.
  */

@@ -60,6 +60,7 @@ class Timer
 
         $this->startTime = microtime(true);
         $this->state = self::RUNNING;
+        return $this->startTime;
     }
 
     /**
@@ -73,6 +74,8 @@ class Timer
 
         $this->stopTime = microtime(true);
         $this->state = self::STOPPED;
+
+        return $this->stopTime;
     }
 
     /**

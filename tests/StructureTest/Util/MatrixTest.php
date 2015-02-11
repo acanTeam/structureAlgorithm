@@ -19,47 +19,51 @@ class MatrixTest extends PHPUnit_Framework_TestCase
 
     public function testDense()
     {
-        $matrix = new \Structure\Util\Matrix\Dense(6, 6);
+        $matrix = new \Structure\Util\Matrix\Dense(3, 3);
 
-        $this->baseMethod($matrix);
-        $this->transposeMethod($matrix);
-        $this->timesMethod($matrix, $matrix);
+        $matrix = $this->assignMatrix($matrix);
+        $this->assertEquals(8, $matrix[array(2, 2)]);
+        $this->assertEquals(6, $matrix[array(2, 0)]);
+        //printf("\n%s\n", str($matrix));
+
+        $matrix = $matrix->getTranspose();
+        $this->assertEquals(6, $matrix[array(0, 2)]);
+        //printf("%s\n", str($matrix));
+        
+        $matrix = $matrix->plus($matrix);
+        $this->assertEquals(16, $matrix[array(2, 2)]);
+        //printf("\n%s\n", str($matrix));
+
+        $matrix = $matrix->times($matrix);
+        $this->assertEquals(444, $matrix[array(2, 2)]);
+        //printf("%s\n", str($matrix));
     }
 
     public function testSparseAsArray()
     {
-        return ;
         $matrix = new \Structure\Util\Matrix\SparseAsArray(6, 6, 6);
-        $this->baseMethod($matrix);
-        $this->transposeMethod($matrix);
+        //$matrix = $this->assignMatrix($matrix);
+        //$matrix->putZero(array(2, 3));
+        //print_r($matrix);
 
-        $matrix1 = new \Structure\Util\Matrix\SparseAsArray(3, 3, 3);
-        $this->timesMethod($matrix1, $matrix1);
+        //$matrix1 = new \Structure\Util\Matrix\SparseAsArray(3, 3, 3);
     }
 
     public function testSparseAsLinkedList()
     {
-        return ;
-
-        $mat = new SparseMatrixAsLinkedList(6, 6, 6);
-        AbstractMatrix::test($mat);
-        AbstractMatrix::testTranspose($mat);
-
-        $mat1 = new SparseMatrixAsLinkedList(3, 3, 3);
-        $mat2 = new SparseMatrixAsLinkedList(3, 3, 3);
-        AbstractMatrix::testTimes($mat1, $mat2);
-
+        $matrix = new \Structure\Util\Matrix\SparseAsLinkedList(6, 6, 6);
+        $matrix[array(2, 3)] = 10;
+        //print_r($matrix);exit();
     }
 
     public function testSparseAsVector()
     {
-        return ;
-
-        $mat = new SparseMatrixAsVector(6, 6, 6);
+        $matrix = new \Structure\Util\Matrix\SparseAsVector(6, 6, 6);
+        print_r($matrix);exit();
         AbstractMatrix::test($mat);
         AbstractMatrix::testTranspose($mat);
-        $mat1 = new SparseMatrixAsVector(3, 3, 9);
-        $mat2 = new SparseMatrixAsVector(3, 3, 9);
+        $mat1 = new SparseAsVector(3, 3, 9);
+        $mat2 = new SparseAsVector(3, 3, 9);
         AbstractMatrix::testTimes($mat1, $mat2);
     }
 
@@ -68,7 +72,7 @@ class MatrixTest extends PHPUnit_Framework_TestCase
      *
      * @param object MatrixInterface $matrix The matrix to test.
      */
-    protected function baseMethod(MatrixInterface $matrix)
+    protected function assignMatrix(MatrixInterface $matrix)
     {
         $k = 0;
         for ($i = 0; $i < $matrix->getNumRows(); ++$i) {
@@ -76,32 +80,8 @@ class MatrixTest extends PHPUnit_Framework_TestCase
                 $matrix[array($i, $j)] = $k++;
             }
         }
-        printf("\n%s\n", str($matrix));
-        $matrix = $matrix->plus($matrix);
-        //printf("\n%s\n", str($matrix));
-    }
 
-    /**
-     * Matrix transpose test program.
-     *
-     * @param object MatrixInterface $matrix The matrix to test.
-     */
-    protected function transposeMethod(MatrixInterface $matrix)
-    {
-        $matrix = $matrix->getTranspose();
-        //printf("%s\n", str($matrix));
+        return $matrix;
     }
-
-    /**
-     * Matrix multiply test program.
-     *
-     * @param object MatrixInterface $matrix1 A matrix to test.
-     * @param object MatrixInterface $matrix2 A matrix to test.
-     */
-    protected function timesMethod(MatrixInterface $matrix1, MatrixInterface $matrix2)
-    {
-        $matrix1 = $matrix2->times($matrix1);
-        //printf("%s\n", str($matrix1));
-    }    
 }
 

@@ -33,7 +33,7 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
 
         $this->array = new BasicArray($maxElements);
         for ($i = 0; $i < $maxElements; ++$i) {
-            $this->array[$i] = new SparseMatrixAsVector_Entry();
+            $this->array[$i] = new SparseMatrixAsVectorEntry();
         }
         $this->numberOfElements = 0;
     }
@@ -132,7 +132,7 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
                 for ($k = $this->array->getLength();
                     $k < $newArray->getLength(); ++$k)
                 {
-                    $newArray[$k] = new SparseMatrixAsVector_Entry();
+                    $newArray[$k] = new SparseMatrixAsVectorEntry();
                 }
                 $this->array = $newArray;
             }
@@ -144,7 +144,7 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
                 $this->array[$k] = $this->array[$k - 1];
                 --$k;
             }
-            $this->array[$k] = new SparseMatrixAsVector_Entry($i, $j, $datum);
+            $this->array[$k] = new SparseMatrixAsVectorEntry($i, $j, $datum);
             ++$this->numberOfElements;
         }
     }
@@ -176,7 +176,7 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
             $k = 0;
             for ($k = $position; $k < $this->numberOfElements; ++$k)
                 $this->array[$k] = $this->array[$k + 1];
-            $this->array[$k] = new SparseMatrixAsVector_Entry();
+            $this->array[$k] = new SparseMatrixAsVectorEntry();
         }
     }
 
@@ -208,7 +208,7 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
         {
             $pos = $this->array[$i]->getColumn();
             $result->array[$offset[$pos]] =
-                new SparseMatrixAsVector_Entry
+                new SparseMatrixAsVectorEntry
                     ($this->array[$i]->getColumn(), $this->array[$i]->getRow(),
                     $this->array[$i]->getDatum());
             $offset[$pos] = $offset[$pos] + 1;
@@ -219,11 +219,11 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
 
     /**
      * Returns the product of this matrix and the specified matrix.
-     * @param object IMatrix $mat The specified matrix.
+     * @param object MatrixInterface $mat The specified matrix.
      * @return object SparseMatrixAsVector
      * The product of this matrix and the specified matrix
      */
-    public function times(IMatrix $mat)
+    public function times(MatrixInterface $mat)
     {
         if ($this->numCols != $mat->numRows)
             throw new ArgumentError();
@@ -273,11 +273,11 @@ class SparseAsVector extends AbstractMatrix implements SparseInterface
      * Returns the sum of this matrix and the specified matrix.
      * This method is not implemented.
      *
-     * @param object IMatrix $mat The specified matrix.
+     * @param object MatrixInterface $mat The specified matrix.
      * @return object SparseMatrixAsVector
      * The sum of this matrix and the specified matrix
      */
-    public function plus(IMatrix $mat)
+    public function plus(MatrixInterface $mat)
     {
         throw new MethodNotImplementedException();
     }

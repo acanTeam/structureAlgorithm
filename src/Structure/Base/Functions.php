@@ -148,14 +148,14 @@ function box($value)
     //echo '##' . $type . "\n";
     switch ($type) {
     case 'boolean':
-        return new \Structure\Util\BoxedBoolean($value);
+        return new \Structure\Util\Boxed\BoxedBoolean($value);
     case 'integer':
-        return new \Structure\Util\BoxedInteger($value);
+        return new \Structure\Util\Boxed\BoxedInteger($value);
     case 'float':
     case 'double':
-        return new \Structure\Util\BoxedFloat($value);
+        return new \Structure\Util\Boxed\BoxedFloat($value);
     case 'string':
-        return new \Structure\Util\BoxedString($value);
+        return new \Structure\Util\Boxed\BoxedString($value);
     case 'array':
         return new \Structure\Util\BasicArray($value);
     default:

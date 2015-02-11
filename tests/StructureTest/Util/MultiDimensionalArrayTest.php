@@ -6,8 +6,6 @@ class MultiDimensionalArrayTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $param = array(1, 2, 3);//, 3, 4);
-        $this->dimension = new Structure\Util\MultiDimensionalArray($param);
         //print_r($this->dimension);
     }
 
@@ -18,6 +16,20 @@ class MultiDimensionalArrayTest extends PHPUnit_Framework_TestCase
 
     public function testConstruct()
     {
+        $param = array(3, 3, 4);
+        $dimension = new Structure\Util\MultiDimensionalArray($param);
+        
+        $dimension[array(2, 2, 3)] = 10;
+
+        $data = $dimension->getData();
+        $this->assertEquals(10, $data[35]);
+        $this->assertEquals(36, $data->getLength());
+
+        try {
+            $dimension[array(2, 2, 4)] = 10;
+        } catch (\Structure\Exception\IndexException $e) {
+            $this->assertInstanceOf('\Structure\Exception\IndexException', $e);
+        }
     }
 }
 

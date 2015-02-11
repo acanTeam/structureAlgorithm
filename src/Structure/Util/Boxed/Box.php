@@ -1,6 +1,6 @@
 <?php
 
-namespace Structure\Util;
+namespace Structure\Util\Boxed;
 
 use Structure\Base\AbstractComparable;
 use Structure\Base\ComparableInterface;

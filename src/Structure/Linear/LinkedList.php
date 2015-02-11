@@ -10,13 +10,13 @@ use Structure\Base\AbstractObject;
 class LinkedList extends AbstractObject
 {
     /**
-     * @var object LinkedList_Element
+     * @var object LinkedListElement
      * The element at the head of the linked list.
      */
     protected $head = null;
 
     /**
-     * @var object LinkedList_Element
+     * @var object LinkedListElement
      * The element at the tail of the linked list.
      */
     protected $tail = null;
@@ -67,8 +67,10 @@ class LinkedList extends AbstractObject
      */
     public function setHead(LinkedListElement $element)
     {
-        if ($element->getList() !== $this)
-            throw new ArgumentError();
+        if ($element->getList() !== $this) {
+            throw new \Structure\Exception\ArgumentException();
+        }
+
         $this->head = $element;
     }
 
@@ -97,8 +99,10 @@ class LinkedList extends AbstractObject
      */
     public function setTail(LinkedListElement $element)
     {
-        if ($element->getList() !== $this)
-            throw new ArgumentError();
+        if ($element->getList() !== $this) {
+            throw new \Structure\Exception\ArgumentException();
+        }
+
         $this->tail = $element;
     }
 
@@ -127,8 +131,10 @@ class LinkedList extends AbstractObject
      */
     public function getFirst()
     {
-        if ($this->head === null)
-            throw new ContainerEmptyException();
+        if ($this->head === null) {
+            throw new \Structure\Exception\ContainerEmptyException();
+        }
+
         return $this->head->getDatum();
     }
 
@@ -139,8 +145,10 @@ class LinkedList extends AbstractObject
      */
     public function getLast()
     {
-        if ($this->tail === null)
-            throw new ContainerEmptyException();
+        if ($this->tail === null) {
+            throw new \Structure\Exception\ContainerEmptyException();
+        }
+
         return $this->tail->getDatum();
     }
     
@@ -152,8 +160,10 @@ class LinkedList extends AbstractObject
     public function prepend($item)
     {
         $tmp = new LinkedListElement($this, $item, $this->head);
-        if ($this->head === null)
+        if ($this->head === null) {
             $this->tail = $tmp;
+        }
+
         $this->head = $tmp;
     }
 
@@ -165,10 +175,12 @@ class LinkedList extends AbstractObject
     public function append($item)
     {
         $tmp = new LinkedListElement($this, $item, null);
-        if ($this->head === null)
+        if ($this->head === null) {
             $this->head = $tmp;
-        else
+        } else {
             $this->tail->setNext($tmp);
+        }
+
         $this->tail = $tmp;
     }
 
@@ -180,11 +192,10 @@ class LinkedList extends AbstractObject
     public function __clone()
     {
         $result = new LinkedList();
-        for ($ptr = $this->head;
-            $ptr !== null; $ptr = $ptr->getNext())
-        {
+        for ($ptr = $this->head; $ptr !== null; $ptr = $ptr->getNext()) {
             $result->append($ptr->getDatum());
         }
+
         return $result;
     }
 
@@ -197,25 +208,28 @@ class LinkedList extends AbstractObject
     {
         $ptr = $this->head;
         $prevPtr = null;
-        while ($ptr !== null && $ptr->getDatum() !== $item)
-        {
+        while ($ptr !== null && $ptr->getDatum() !== $item) {
             $prevPtr = $ptr;
             $ptr = $ptr->getNext();
         }
-        if ($ptr === null)
-            throw new ArgumentError();
-        if ($ptr === $this->head)
-            $this->head = $ptr->getNext();
-        else
-        {
-            $tmp = $ptr->getNext();
-            if ($tmp === null)
-                $prevPtr->unsetNext();
-            else
-                $prevPtr->setNext($ptr->getNext());
+
+        if ($ptr === null) {
+            throw new \Structure\Exception\ArgumentException();
         }
-        if ($ptr === $this->tail)
+
+        if ($ptr === $this->head) {
+            $this->head = $ptr->getNext();
+        } else {
+            $tmp = $ptr->getNext();
+            if ($tmp === null) {
+                $prevPtr->unsetNext();
+            } else {
+                $prevPtr->setNext($ptr->getNext());
+            }
+        }
+        if ($ptr === $this->tail) {
             $this->tail = $prevPtr;
+        }
     }
 
     /**

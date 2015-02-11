@@ -122,4 +122,9 @@ class MultiDimensionalArray extends AbstractObject implements \ArrayAccess
     {
         $this->data[$this->getOffset($indices)] = null;
     }
+
+    public function getData()
+    {
+        return $this->data;
+    }
 }

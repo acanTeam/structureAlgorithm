@@ -2,8 +2,6 @@
 
 namespace Structure\Linear;
 
-use Structure\Base\AbstractObject;
-
 /**
  * Represents an element of a linked list.
  */
@@ -83,7 +81,7 @@ class LinkedListElement
     public function setNext(LinkedListElement $next)
     {
         if ($this->list !== $next->list) {
-            throw new \Structure\Exception\ArgumentError();
+            throw new \Structure\Exception\ArgumentException();
         }
         $this->next = $next;
     }

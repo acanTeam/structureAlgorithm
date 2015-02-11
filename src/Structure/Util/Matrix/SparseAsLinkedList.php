@@ -2,10 +2,13 @@
 
 namespace Structure\Util\Matrix;
 
+use Structure\Util\BasicArray;
+use Structure\Linear\LinkedList;
+
 /**
  * Sparse matrix implemented using an array of linked lists.
  */
-class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
+class SparseAsLinkedList extends AbstractMatrix implements SparseInterface
 {
     /**
      * @var object BasicArray
@@ -14,7 +17,7 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
     protected $lists = null;
 
     /**
-     * Construct a <code>SparseMatrixAsLinkedLists</code>
+     * Construct a <code>SparseAsLinkedLists</code>
      * with the specified dimensions.
      *
      * @param integer $numRows The number of rows.
@@ -23,9 +26,11 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
     public function __construct($numRows, $numCols)
     {
         parent::__construct($numRows, $numCols);
+
         $this->lists = new BasicArray($numRows);
-        for ($i = 0; $i < $this->numRows; ++$i)
+        for ($i = 0; $i < $this->numRows; ++$i) {
             $this->lists[$i] = new LinkedList();
+        }
     }
 
     /**
@@ -44,10 +49,8 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
      */
     public function offsetExists($indices)
     {
-        return $indices[0] >= 0 &&
-            $indices[0] < $this->numRows &&
-            $indices[1] >= 0 &&
-            $indices[1] < $this->numCols;
+        return $indices[0] >= 0 && $indices[0] < $this->numRows &&
+            $indices[1] >= 0 && $indices[1] < $this->numCols;
     }
 
     /**
@@ -58,18 +61,20 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
      */
     public function offsetGet($indices)
     {
-        if (!$this->offsetExists($indices))
-            throw new IndexError();
+        if (!$this->offsetExists($indices)) {
+            throw new \Structure\Exception\IndexException();
+        }
+
         $i = $indices[0];
         $j = $indices[1];
-        for ($ptr = $this->lists[$i]->getHead();
-            $ptr !== null; $ptr = $ptr->getNext ())
-        {
+        for ($ptr = $this->lists[$i]->getHead(); $ptr !== null; $ptr = $ptr->getNext()) {
             $entry = $ptr->getDatum();
-            if ($entry->getColumn() == $j)
+            if ($entry->getColumn() == $j) {
                 return $entry->getDatum();
-            if ($entry->getColumn() > $j)
+            }
+            if ($entry->getColumn() > $j) {
                 break;
+            }
         }
         return 0;
     }
@@ -82,28 +87,23 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
      */
     public function offsetSet($indices, $datum)
     {
-        if (!$this->offsetExists($indices))
-            throw new IndexError();
+        if (!$this->offsetExists($indices)) {
+            throw new \Structure\Exception\IndexException();
+        }
+
         $i = $indices[0];
         $j = $indices[1];
-        for ($ptr = $this->lists[$i]->getHead();
-            $ptr !== null; $ptr = $ptr->getNext())
-        {
+        for ($ptr = $this->lists[$i]->getHead(); $ptr !== null; $ptr = $ptr->getNext()) {
             $entry = $ptr->getDatum();
-            if ($entry->getColumn() == $j)
-            {
+            if ($entry->getColumn() == $j) {
                 $entry->setDatum($datum);
                 return;
-            }
-            elseif ($entry->getColumn() > $j)
-            {
-                $ptr->insertBefore(new SparseMatrixAsLinkedList_Entry(
-                    $i, $j, $datum));
+            } elseif ($entry->getColumn() > $j) {
+                $ptr->insertBefore(new SparseAsLinkedListEntry($i, $j, $datum));
                 return;
             }
         }
-        $this->lists[$i]->append(new SparseMatrixAsLinkedList_Entry (
-            $i, $j, $datum));
+        $this->lists[$i]->append(new SparseAsLinkedListEntry($i, $j, $datum));
     }
 
     /**
@@ -125,16 +125,15 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
      */
     public function putZero($indices)
     {
-        if (!$this->offsetExists($indices))
-            throw new IndexError();
+        if (!$this->offsetExists($indices)) {
+            throw new \Structure\Exception\IndexException();
+        }
+
         $i = $indices[0];
         $j = $indices[1];
-        for ($ptr = $this->lists[i]->getHead();
-            $ptr !== null; $ptr = $ptr->getNext())
-        {
+        for ($ptr = $this->lists[i]->getHead(); $ptr !== null; $ptr = $ptr->getNext()) {
             $entry = $ptr->getDatum();
-            if ($entry->getColumn() == $j)
-            {
+            if ($entry->getColumn() == $j) {
                 $this->lists[i]->extract($entry);
                 return;
             }
@@ -144,22 +143,16 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
     /**
      * Returns the transpose of this matrix.
      *
-     * @return object SparseMatrixAsLinkedList The transpose of this matrix.
+     * @return object SparseAsLinkedList The transpose of this matrix.
      */
     public function getTranspose()
     {
-        $result = new SparseMatrixAsLinkedList(
-            $this->numCols, $this->numRows);
-        for ($i = 0; $i < $this->numCols; ++$i)
-        {
-            for ($ptr = $this->lists[$i]->getHead();
-                $ptr !== null; $ptr = $ptr->getNext())
-            {
+        $result = new SparseAsLinkedList($this->numCols, $this->numRows);
+        for ($i = 0; $i < $this->numCols; ++$i) {
+            for ($ptr = $this->lists[$i]->getHead(); $ptr !== null; $ptr = $ptr->getNext()) {
                 $entry = $ptr->getDatum();
-                $result->lists[$entry->getColumn()]->append(
-                    new SparseMatrixAsLinkedList_Entry(
-                        $entry->getColumn(), $entry->getRow(),
-                        $entry->getDatum()));
+                $newEntry = SparseAsLinkedListEntry($entry->getColumn(), $entry->getRow(), $entry->getDatum());
+                $result->lists[$entry->getColumn()]->append($newEntry);
             }
         }
         return $result;
@@ -169,12 +162,12 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
      * Returns the product of this matrix and the specified matrix.
      * This method is not implemented.
      *
-     * @param object IMatrix $mat The specified matrix.
-     * @return object SparseMatrixAsLinkedList
+     * @param object MatrixInterface $mat The specified matrix.
+     * @return object SparseAsLinkedList
      * The product of this matrix and the specified matrix
      * @exception MethodNotImplemented Always.
      */
-    public function times(IMatrix $mat)
+    public function times(MatrixInterface $mat)
     {
         throw new MethodNotImplementedException();
     }
@@ -182,12 +175,12 @@ class SparseMatrixAsLinkedList extends AbstractMatrix implements SparseInterface
     /**
      * Returns the sum of this matrix and the specified matrix.
      * This method is not implemented.
-     * @param object IMatrix $mat The specified matrix.
-     * @return object SparseMatrixAsLinkedList
+     * @param object MatrixInterface $mat The specified matrix.
+     * @return object SparseAsLinkedList
      * The sum of this matrix and the specified matrix
      * @exception MethodNotImplemented Always.
      */
-    public function plus(IMatrix $mat)
+    public function plus(MatrixInterface $mat)
     {
         throw new MethodNotImplementedException();
     }

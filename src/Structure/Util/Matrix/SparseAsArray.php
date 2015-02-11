@@ -67,11 +67,13 @@ class SparseAsArray extends AbstractMatrix implements SparseInterface
     {
         $result = -1;
         for ($k = 0; $k < $this->fill && $this->columns[array($i, $k)] != self::END_OF_ROW; ++$k) {
+            //echo $k . '++' . $this->fill . '++' . $this->columns[array($i, $k)] . '**';
             if ($this->columns[array($i, $k)] == $j) {
                 $result = $k;
                 break;
             }
         }
+        //echo $i . '##' . $j . '##' . $result . "###\n";
         return $result;
     }
 
@@ -83,10 +85,8 @@ class SparseAsArray extends AbstractMatrix implements SparseInterface
      */
     public function offsetExists($indices)
     {
-        return $indices[0] >= 0 &&
-            $indices[0] < $this->numRows &&
-            $indices[1] >= 0 &&
-            $indices[1] < $this->numCols;
+        return $indices[0] >= 0 && $indices[0] < $this->numRows &&
+            $indices[1] >= 0 && $indices[1] < $this->numCols;
     }
 
     /**
@@ -97,15 +97,16 @@ class SparseAsArray extends AbstractMatrix implements SparseInterface
      */
     public function offsetGet($indices)
     {
-        if (!$this->offsetExists($indices))
-            throw new IndexError();
+        if (!$this->offsetExists($indices)) {
+            throw new \Structure\Exception\IndexException();
+        }
+        
         $i = $indices[0];
         $j = $indices[1];
         $position = $this->findPosition($i, $j);
-        if ($position >= 0)
-            return $this->values[array($i, $position)];
-        else
-            return 0;
+
+        $result = $position >= 0 ? $this->values[array($i, $position)] : 0;
+        return $result;
     }
 
     /**
